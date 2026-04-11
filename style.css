@@ -1,0 +1,123 @@
+/* استدعاء خط عربي أنيق واحترافي من جوجل */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+
+/* الإعدادات الأساسية للموقع */
+body {
+    font-family: 'Cairo', sans-serif;
+    direction: rtl; /* لجعل الموقع من اليمين لليسار */
+    text-align: right;
+    margin: 0;
+    padding: 0;
+    background-color: #f3f3f3; /* لون خلفية رمادي فاتح مثل أمازون */
+    color: #0f1111;
+}
+
+/* تنسيق الشريط العلوي (الهيدر) */
+.header {
+    background-color: #232f3e; /* لون أمازون الكحلي الداكن */
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.header img {
+    max-height: 40px;
+    margin-left: 10px;
+}
+
+.brand-name {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+/* تنسيق زر الشراء الأساسي */
+.btn-amazon {
+    background-color: #ffd814;
+    border: none;
+    border-radius: 100px;
+    padding: 12px 20px;
+    width: 100%;
+    font-family: 'Cairo', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f1111;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(213, 170, 0, 0.5);
+    margin-top: 10px;
+}
+
+/* حاوية المنتجات في الرئيسية */
+.product-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* عرض منتجين بجوار بعض في الموبايل */
+    gap: 10px;
+    padding: 10px;
+}
+
+/* شكل بطاقة المنتج في الرئيسية */
+.product-card {
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card img {
+    width: 100%;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.price {
+    font-size: 18px;
+    font-weight: 700;
+    color: #B12704; /* لون السعر الأحمر المميز */
+}
+/* =========================================
+   تنسيقات صفحة المنتج (تصميم أمازون)
+========================================= */
+.product-container { background: #fff; padding: 15px; margin-bottom: 10px; }
+.main-image-box { text-align: center; margin-bottom: 10px; }
+.main-img { width: 100%; max-width: 400px; border-radius: 8px; }
+.thumbnails { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
+.thumbnails img { width: 60px; height: 60px; border: 1px solid #a6a6a6; border-radius: 4px; cursor: pointer; }
+.thumbnails img:hover { border-color: #e77600; box-shadow: 0 0 3px #e77600; }
+
+.product-title { font-size: 18px; font-weight: 700; color: #0f1111; margin: 10px 0 5px; line-height: 1.4; }
+.rating { color: #FFA41C; font-size: 14px; margin-bottom: 5px; }
+.sales-badge { display: inline-block; background: #C45500; color: #fff; font-size: 12px; padding: 3px 8px; border-radius: 2px; margin-bottom: 10px; font-weight: bold;}
+
+.price-block { margin-bottom: 15px; }
+.discount-badge { color: #CC0C39; font-size: 18px; margin-left: 5px; }
+.price-now { font-size: 28px; font-weight: 900; color: #0f1111; }
+.price-old { text-decoration: line-through; color: #565959; font-size: 14px; }
+.vat-info { font-size: 12px; color: #565959; }
+
+.features-icons { display: flex; justify-content: space-between; text-align: center; font-size: 12px; color: #007185; margin: 15px 0; border-top: 1px solid #e7e7e7; border-bottom: 1px solid #e7e7e7; padding: 15px 0; }
+.features-icons div { width: 23%; line-height: 1.3;}
+.features-icons span { font-size: 24px; display: block; margin-bottom: 5px; }
+
+.about-item { font-size: 14px; line-height: 1.6; color: #0f1111; }
+.about-item h4 { margin-bottom: 5px; }
+
+/* صندوق الطلب والشحن */
+.order-box { border: 1px solid #D5D9D9; border-radius: 8px; padding: 15px; background: #fff; margin-bottom: 20px;}
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 5px; font-weight: 700; font-size: 14px;}
+.form-control { width: 100%; padding: 10px; border: 1px solid #888C8C; border-radius: 4px; font-family: 'Cairo'; box-sizing: border-box; background: #F0F2F2;}
+.delivery-info { font-size: 14px; margin-top: 10px; padding: 10px; background: #F3F3F3; border-radius: 4px; }
+.delivery-info strong { color: #007185; }
+
+.coupon-box { display: flex; gap: 5px; margin-bottom: 15px;}
+.coupon-box input { flex: 1; padding: 8px; border: 1px solid #888C8C; border-radius: 4px; font-family: 'Cairo'; }
+.coupon-btn { background: #fff; border: 1px solid #D5D9D9; padding: 0 15px; border-radius: 4px; font-family: 'Cairo'; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+/* قسم المنتجات ذات الصلة */
+.related-section { background: #fff; padding: 15px; margin-bottom: 20px;}
+.related-section h3 { font-size: 16px; margin-bottom: 10px; }

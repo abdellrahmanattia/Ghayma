@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>غيمة | تفاصيل المنتج</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <a href="index.html"><img src="images/logo.png" alt="شعار غيمة"></a>
+        <span class="brand-name">غيمة</span>
+    </header>
+
+    <div class="product-container">
+        <div class="main-image-box">
+            <img id="mainImg" src="images/product-1.jpg" class="main-img" alt="المنتج الأساسي">
+        </div>
+        <div class="thumbnails">
+            <img src="images/product-1.jpg" onclick="changeImg(this.src)">
+            <img src="images/product-1-1.jpg" onclick="changeImg(this.src)">
+        </div>
+
+        <h1 class="product-title">جهاز تدريب القوة ومقبض اليد مع عداد ذكي، بناء عضلات الساعد (متعدد الألوان)</h1>
+        
+        <div class="rating">⭐⭐⭐⭐☆ (443 تقييم)</div>
+        <div class="sales-badge">تم شراء 300+ سلعة في الشهر الماضي</div>
+
+        <div class="price-block">
+            <span class="discount-badge">-43%</span>
+            <span class="price-now">88<small>00</small></span> <small>جنيه</small><br>
+            <span class="price-old">سعر القائمة: 153.70 جنيه</span>
+            <div class="vat-info">الأسعار تشمل ضريبة القيمة المضافة.</div>
+        </div>
+
+        <div class="features-icons">
+            <div><span>💵</span> الدفع نقداً عند الاستلام</div>
+            <div><span>🔄</span> 15 يوم للإرجاع</div>
+            <div><span>🚚</span> شحن من غيمة</div>
+            <div><span>🔒</span> معاملتك آمنة</div>
+        </div>
+
+        <div class="about-item">
+            <h4>عن هذه السلعة</h4>
+            <ul>
+                <li>مادة تي ار بي عالية الجودة ومقبض غير قابل للانزلاق.</li>
+                <li>سوستة كروم قوية قابلة للتعديل من 10 إلى 60 كجم.</li>
+                <li>عداد ذكي مدمج لتتبع عدد الضغطات بدقة.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="order-box">
+        <h3 style="margin-top:0;">إتمام الطلب</h3>
+        
+        <div class="form-group">
+            <label>المحافظة (لحساب موعد التوصيل)</label>
+            <select id="govSelect" class="form-control" onchange="calculateDelivery()">
+                <option value="cairo">القاهرة والجيزة</option>
+                <option value="alex">الإسكندرية ومطروح</option>
+                <option value="delta">محافظات الدلتا</option>
+                <option value="upper">محافظات الصعيد</option>
+            </select>
+            
+            <div class="delivery-info">
+                توصيل بـ <strong id="shipFee">30 جنيه</strong><br>
+                التوصيل المتوقع: <strong id="shipDate">غداً</strong>
+            </div>
+        </div>
+
+        <div class="coupon-box">
+            <input type="text" id="couponInput" placeholder="أدخل كوبون الخصم (اختياري)">
+            <button class="coupon-btn" onclick="applyCoupon()">تطبيق</button>
+        </div>
+        
+        <div class="form-group">
+            <label>الاسم بالكامل</label>
+            <input type="text" id="customerName" class="form-control" placeholder="اكتب اسمك ثلاثي">
+        </div>
+        <div class="form-group">
+            <label>رقم الهاتف</label>
+            <input type="tel" id="customerPhone" class="form-control" placeholder="01xxxxxxxxx">
+        </div>
+        <div class="form-group">
+            <label>العنوان بالتفصيل</label>
+            <input type="text" id="customerAddress" class="form-control" placeholder="الشارع، العمارة، رقم الشقة">
+        </div>
+        
+        <button id="submitBtn" class="btn-amazon" onclick="sendOrder()">تأكيد الطلب (شراء الآن)</button>  
+    </div>
+
+    <div class="related-section">
+        <h3>منتجات ذات صلة بهذه السلعة</h3>
+        <div class="product-grid">
+            <a href="#" class="product-card">
+                <img src="images/product-2.jpg" alt="">
+                <span class="price">150 ج.م</span>
+            </a>
+            <a href="#" class="product-card">
+                <img src="images/product-3.jpg" alt="">
+                <span class="price">200 ج.م</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // دالة تبديل الصور
+        function changeImg(src) {
+            document.getElementById('mainImg').src = src;
+        }
+
+        // دالة حساب موعد وتكلفة التوصيل التلقائي
+        function calculateDelivery() {
+            const gov = document.getElementById('govSelect').value;
+            let days = 1;
+            let fee = 30;
+
+            if (gov === 'cairo') { days = 1; fee = 35; }
+            else if (gov === 'alex') { days = 2; fee = 45; }
+            else if (gov === 'delta') { days = 3; fee = 50; }
+            else if (gov === 'upper') { days = 4; fee = 65; }
+
+            const d = new Date();
+            d.setDate(d.getDate() + days);
+            const options = { weekday: 'long', month: 'long', day: 'numeric' };
+            const dateStr = d.toLocaleDateString('ar-EG', options);
+
+            document.getElementById('shipFee').innerText = fee + ' جنيه';
+            document.getElementById('shipDate').innerText = dateStr;
+        }
+
+        // دالة تطبيق الكوبون
+        function applyCoupon() {
+            const code = document.getElementById('couponInput').value;
+            if (code.toUpperCase() === 'GHAYMA5') {
+                alert('مبروك! تم تطبيق خصم 5% بنجاح.');
+            } else {
+                alert('الكوبون غير صحيح أو منتهي الصلاحية.');
+            }
+        }
+
+        // تشغيل حساب التوصيل فور فتح الصفحة
+        window.onload = calculateDelivery;
+
+        // دالة إرسال الطلب إلى تليجرام
+        async function sendOrder() {
+            const name = document.getElementById('customerName').value;
+            const phone = document.getElementById('customerPhone').value;
+            const address = document.getElementById('customerAddress').value;
+            
+            const govSelect = document.getElementById('govSelect');
+            const govName = govSelect.options[govSelect.selectedIndex].text;
+            const shipFee = document.getElementById('shipFee').innerText;
+            
+            const productName = "جهاز تدريب القوة ومقبض اليد";
+            const finalPrice = "88 جنيه";
+
+            if(!name || !phone || !address) {
+                alert("عذراً! يرجى إكمال الاسم ورقم الهاتف والعنوان لتأكيد الشحن.");
+                return; 
+            }
+
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = "جاري إرسال الطلب... ⏳";
+            btn.disabled = true;
+            btn.style.backgroundColor = "#e7e7e7";
+
+            const message = `
+📦 *طلب جديد من متجر غيمة!*
+🛒 *المنتج:* ${productName}
+💰 *السعر:* ${finalPrice}
+🚚 *المحافظة:* ${govName} (شحن: ${shipFee})
+-------------------------
+👤 *الاسم:* ${name}
+📞 *الهاتف:* ${phone}
+📍 *العنوان:* ${address}
+            `;
+
+            // ==========================================
+            // حط التوكن والـ ID بتوعك هنا
+            // ==========================================
+            const token = "8628571545:AAE-aYI0nTra7T_k1WfcKNOm-bfS0CBZEmQ";
+            const chatId = "6472884024";
+            
+            const url = `https://api.telegram.org/bot${token}/sendMessage`;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: message,
+                        parse_mode: 'Markdown'
+                    })
+                });
+
+                if(response.ok) {
+                    alert("🎉 تم استلام طلبك بنجاح! سنتواصل معك قريباً لتأكيد الشحن.");
+                    document.getElementById('customerName').value = "";
+                    document.getElementById('customerPhone').value = "";
+                    document.getElementById('customerAddress').value = "";
+                } else {
+                    alert("حدث خطأ في الإرسال، يرجى المحاولة مرة أخرى.");
+                }
+            } catch (error) {
+                alert("تأكد من اتصالك بالإنترنت وحاول مجدداً.");
+            } finally {
+                btn.innerText = "تأكيد الطلب (شراء الآن)";
+                btn.disabled = false;
+                btn.style.backgroundColor = "#ffd814";
+            }
+        }
+    </script>
+</body>
+</html>
