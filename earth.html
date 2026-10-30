@@ -12,7 +12,7 @@
   button { pointer-events:auto; background:rgba(20,30,50,.75); color:#fff; border:1px solid #4a6a9a; border-radius:8px; padding:8px 12px; font-size:14px; cursor:pointer; }
   button.on { background:#2b6cb0; }
   #zoom { position:fixed; bottom:20px; left:12px; display:flex; flex-direction:column; gap:6px; }
-  #status { position:fixed; bottom:14px; left:0; right:0; text-align:center; font-size:13px; opacity:.8; pointer-events:none; }
+  #status { position:fixed; bottom:14px; left:0; right:0; text-align:center; font-size:13px; opacity:.9; pointer-events:none; }
 </style>
 </head>
 <body>
@@ -20,7 +20,6 @@
 
 <div id="ui">
   <button id="bBorders" class="on">الحدود</button>
-  <button id="bClouds" class="on">السحب</button>
   <button id="bRotate">دوران تلقائي</button>
   <button id="bReset">إعادة الضبط</button>
 </div>
@@ -33,6 +32,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson-client/3.1.0/topojson-client.min.js"></script>
 <script>
+const statusEl = document.getElementById('status');
 const canvas = document.getElementById('c');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -42,12 +42,12 @@ const camera = new THREE.PerspectiveCamera(45, 1, 0.01, 100);
 let camDist = 3.2;
 camera.position.set(0, 0, camDist);
 
-scene.add(new THREE.AmbientLight(0x556677, 1));
-const sun = new THREE.DirectionalLight(0xffffff, 1.6);
+scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+const sun = new THREE.DirectionalLight(0xffffff, 1.2);
 sun.position.set(5, 2, 4);
 scene.add(sun);
 
-// root: يتحكم فيه المستخدم | tilt: ميل محور الأرض 23.4 درجة
+// root: يتحكم فيه المستخدم | tilt: ميل محور الأرض
 const root = new THREE.Group();
 root.rotation.order = 'YXZ';
 root.rotation.y = -0.6;
@@ -56,31 +56,23 @@ const tilt = new THREE.Group();
 tilt.rotation.z = THREE.MathUtils.degToRad(23.4);
 root.add(tilt);
 
+// ===== الأرض =====
 const loader = new THREE.TextureLoader();
 loader.setCrossOrigin('anonymous');
-const T = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/textures/planets/';
+const IMG = 'https://cdn.jsdelivr.net/npm/three-globe@2.30.0/example/img/';
 
 const earthMat = new THREE.MeshPhongMaterial({
-  map: loader.load(T + 'earth_atmos_2048.jpg'),
-  normalMap: loader.load(T + 'earth_normal_2048.jpg'),
-  normalScale: new THREE.Vector2(0.8, 0.8),
-  specularMap: loader.load(T + 'earth_specular_2048.jpg'),
-  specular: new THREE.Color(0x222222),
-  shininess: 15
+  map: loader.load(IMG + 'earth-blue-marble.jpg',
+    () => statusEl.textContent = 'اسحب للدوران • العجلة أو + و − للتكبير',
+    undefined,
+    () => statusEl.textContent = 'تعذر تحميل صورة الأرض، تأكد من الإنترنت'),
+  bumpMap: loader.load(IMG + 'earth-topology.png'),
+  bumpScale: 0.02,
+  specular: new THREE.Color(0x333333),
+  shininess: 10
 });
 const earth = new THREE.Mesh(new THREE.SphereGeometry(1, 96, 96), earthMat);
 tilt.add(earth);
-
-const clouds = new THREE.Mesh(
-  new THREE.SphereGeometry(1.01, 96, 96),
-  new THREE.MeshPhongMaterial({
-    map: loader.load(T + 'earth_clouds_1024.png'),
-    transparent: true,
-    opacity: 0.85,
-    depthWrite: false
-  })
-);
-tilt.add(clouds);
 
 // توهج الغلاف الجوي
 const atmo = new THREE.Mesh(
@@ -106,36 +98,41 @@ const atmo = new THREE.Mesh(
 );
 scene.add(atmo);
 
-// الحدود الدولية
+// ===== الحدود الدولية =====
 const borders = new THREE.Group();
 tilt.add(borders);
 
-// تحويل خط الطول والعرض لإحداثيات 3D (متوافقة مع خريطة الأرض)
+// تحويل خط الطول والعرض لإحداثيات 3D
 function ll(lon, lat, r = 1.002) {
   const la = lat * Math.PI / 180, lo = lon * Math.PI / 180;
   return [r * Math.cos(la) * Math.cos(lo), r * Math.sin(la), -r * Math.cos(la) * Math.sin(lo)];
 }
 
-const statusEl = document.getElementById('status');
 fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json')
-  .then(r => r.json())
+  .then(r => {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  })
   .then(topo => {
     const mesh = topojson.mesh(topo, topo.objects.countries, (a, b) => a !== b);
     const pts = [];
     for (const line of mesh.coordinates) {
       for (let i = 0; i < line.length - 1; i++) {
         const [lon1, lat1] = line[i], [lon2, lat2] = line[i + 1];
-        if (Math.abs(lon1 - lon2) > 180) continue; // تجاهل الخطوط التي تعبر خط 180
+        if (Math.abs(lon1 - lon2) > 180) continue;
         pts.push(...ll(lon1, lat1), ...ll(lon2, lat2));
       }
     }
     const g = new THREE.BufferGeometry();
     g.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
     borders.add(new THREE.LineSegments(g, new THREE.LineBasicMaterial({ color: 0xffb347, transparent: true, opacity: 0.8 })));
-    statusEl.textContent = 'اسحب للدوران • العجلة أو + و − للتكبير';
-    setTimeout(() => statusEl.style.display = 'none', 4000);
   })
-  .catch(() => statusEl.textContent = 'تعذر تحميل بيانات الحدود');
+  .catch(err => {
+    console.error(err);
+    statusEl.textContent = 'تعذر تحميل بيانات الحدود: ' + err.message;
+  });
+
+setTimeout(() => statusEl.style.display = 'none', 5000);
 
 // ===== التحكم =====
 const pointers = new Map();
@@ -180,9 +177,6 @@ document.getElementById('zOut').onclick = () => camDist = Math.min(6, camDist * 
 const bBorders = document.getElementById('bBorders');
 bBorders.onclick = () => { borders.visible = !borders.visible; bBorders.classList.toggle('on', borders.visible); };
 
-const bClouds = document.getElementById('bClouds');
-bClouds.onclick = () => { clouds.visible = !clouds.visible; bClouds.classList.toggle('on', clouds.visible); };
-
 const bRotate = document.getElementById('bRotate');
 bRotate.onclick = () => { autoRot = !autoRot; bRotate.classList.toggle('on', autoRot); };
 
@@ -204,7 +198,6 @@ resize();
 function animate() {
   requestAnimationFrame(animate);
   if (autoRot && pointers.size === 0) root.rotation.y += 0.002;
-  clouds.rotation.y += 0.0003;
   camera.position.z += (camDist - camera.position.z) * 0.15;
   renderer.render(scene, camera);
 }
